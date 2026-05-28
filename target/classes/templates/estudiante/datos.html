@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Mis Datos · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-estudiante}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-id-card" style="color:var(--accent);"></i> &nbsp;Mis Datos Personales</h1>
+                <p>Información registrada en el sistema Saber Pro</p>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Header visual -->
+            <div class="profile-card" style="margin-bottom:28px;">
+                <div class="profile-avatar" style="font-size:36px; width:80px; height:80px;">🎓</div>
+                <div class="profile-info">
+                    <h2 th:text="${estudiante.nombreCompleto}"></h2>
+                    <p th:text="${estudiante.programa}"></p>
+                    <div class="profile-meta" style="margin-top:12px;">
+                        <span class="badge-tec" th:if="${estudiante.tipoPrograma.name() == 'TECNOLOGIA'}"
+                              style="font-size:12px; padding:5px 14px;">Tecnología</span>
+                        <span class="badge-prof" th:if="${estudiante.tipoPrograma.name() == 'PROFESIONAL'}"
+                              style="font-size:12px; padding:5px 14px;">Profesional</span>
+                        <span class="badge-aprobado" th:if="${estudiante.estado.name() == 'APROBADO'}"
+                              style="font-size:12px; padding:5px 14px;">✅ Aprobado</span>
+                        <span class="badge-pendiente" th:if="${estudiante.estado.name() == 'PENDIENTE'}"
+                              style="font-size:12px; padding:5px 14px;">⏳ Pendiente</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Datos de identificación -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-fingerprint"></i> Identificación</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display:flex; flex-direction:column; gap:16px;">
+                            <div style="padding-bottom:14px; border-bottom:1px solid var(--border);">
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Tipo de Documento</div>
+                                <div style="font-size:15px; font-weight:600;" th:text="${estudiante.tipoDocumento}"></div>
+                            </div>
+                            <div style="padding-bottom:14px; border-bottom:1px solid var(--border);">
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Número de Documento</div>
+                                <div style="font-size:15px; font-weight:600; font-family:monospace;" th:text="${estudiante.numeroDocumento}"></div>
+                            </div>
+                            <div style="padding-bottom:14px; border-bottom:1px solid var(--border);">
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Número de Registro</div>
+                                <div style="font-size:15px; font-weight:600; font-family:monospace; color:var(--primary);" th:text="${estudiante.numeroRegistro}"></div>
+                            </div>
+                            <div>
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Nombre Completo</div>
+                                <div style="font-size:15px; font-weight:600;" th:text="${estudiante.nombreCompleto}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datos de contacto y programa -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-envelope"></i> Contacto y Programa</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display:flex; flex-direction:column; gap:16px;">
+                            <div style="padding-bottom:14px; border-bottom:1px solid var(--border);">
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Correo Electrónico</div>
+                                <div style="font-size:14px; font-weight:600;" th:text="${estudiante.correoElectronico}"></div>
+                            </div>
+                            <div th:if="${estudiante.numeroTelefonico}" style="padding-bottom:14px; border-bottom:1px solid var(--border);">
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Teléfono</div>
+                                <div style="font-size:15px; font-weight:600;" th:text="${estudiante.numeroTelefonico}"></div>
+                            </div>
+                            <div style="padding-bottom:14px; border-bottom:1px solid var(--border);">
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Programa Académico</div>
+                                <div style="font-size:15px; font-weight:600;" th:text="${estudiante.programa}"></div>
+                            </div>
+                            <div>
+                                <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">Tipo de Programa</div>
+                                <span class="badge-tec" th:if="${estudiante.tipoPrograma.name() == 'TECNOLOGIA'}" style="font-size:13px; padding:6px 14px;">Tecnología (70%)</span>
+                                <span class="badge-prof" th:if="${estudiante.tipoPrograma.name() == 'PROFESIONAL'}" style="font-size:13px; padding:6px 14px;">Profesional (30%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nota informativa -->
+            <div class="alert alert-info" style="margin-top:8px;">
+                <i class="fa fa-circle-info"></i>
+                Si alguno de tus datos es incorrecto, comunícate con la coordinación académica para realizar la corrección correspondiente.
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

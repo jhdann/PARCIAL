@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Mis Beneficios · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-estudiante}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-award" style="color:var(--accent);"></i> &nbsp;Mis Beneficios Académicos</h1>
+                <p th:text="'Beneficios disponibles para ' + ${estudiante.tipoPrograma.name()}"></p>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Info del programa -->
+            <div class="alert alert-info" style="margin-bottom:24px;">
+                <i class="fa fa-circle-info"></i>
+                Los beneficios mostrados corresponden a tu programa
+                <strong th:text="${estudiante.tipoPrograma.name() == 'TECNOLOGIA' ? 'Tecnología' : 'Profesional'}"></strong>
+                y a los beneficios disponibles para todos los programas. Para acceder a ellos, tu resultado Saber Pro debe cumplir el nivel mínimo requerido.
+            </div>
+
+            <!-- Sin beneficios -->
+            <div th:if="${#lists.isEmpty(beneficios)}"
+                 style="text-align:center; padding:60px; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);">
+                <i class="fa fa-award" style="font-size:48px; opacity:0.2; display:block; margin-bottom:12px;"></i>
+                <p style="color:var(--text-muted);">No hay beneficios configurados para tu programa en este momento.</p>
+            </div>
+
+            <!-- Tarjetas de beneficios -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:18px;">
+                <div th:each="b : ${beneficios}"
+                     style="background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; transition:transform 0.2s, box-shadow 0.2s;"
+                     onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 32px rgba(26,58,92,0.18)'"
+                     onmouseout="this.style.transform=''; this.style.boxShadow=''">
+
+                    <!-- Header de la tarjeta -->
+                    <div style="background:linear-gradient(135deg,var(--primary-dark),var(--primary)); padding:20px; color:#fff;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <div style="font-size:11px; opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"
+                                     th:text="${b.tipo}"></div>
+                                <h3 style="font-size:16px; font-weight:700;" th:text="${b.nombre}"></h3>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; flex-shrink:0; margin-left:10px;"
+                                 th:text="${b.nivelRequerido}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Cuerpo -->
+                    <div style="padding:18px 20px;">
+                        <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:14px;"
+                           th:text="${b.descripcion}"></p>
+
+                        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                            <span class="badge-tec" th:if="${b.programaAplicable.name() == 'TECNOLOGIA'}">
+                                <i class="fa fa-microchip"></i> Tecnología
+                            </span>
+                            <span class="badge-prof" th:if="${b.programaAplicable.name() == 'PROFESIONAL'}">
+                                <i class="fa fa-graduation-cap"></i> Profesional
+                            </span>
+                            <span class="badge-aprobado" th:if="${b.programaAplicable.name() == 'AMBOS'}">
+                                <i class="fa fa-users"></i> Todos los programas
+                            </span>
+                            <span style="font-size:11px; color:var(--text-muted); background:var(--bg); padding:3px 10px; border-radius:20px; margin-left:auto;"
+                                  th:text="${b.resolucion}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

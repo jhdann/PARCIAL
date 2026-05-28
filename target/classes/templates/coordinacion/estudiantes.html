@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Gestionar Estudiantes · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-coordinacion}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-users" style="color:var(--accent);"></i> &nbsp;Gestionar Estudiantes</h1>
+                <p>CRUD de alumnos inscritos a Saber Pro</p>
+            </div>
+            <div class="topbar-right">
+                <button onclick="document.getElementById('modalNuevo').style.display='flex'"
+                        class="btn btn-accent">
+                    <i class="fa fa-user-plus"></i> Nuevo Estudiante
+                </button>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Alertas -->
+            <div th:if="${success}" class="alert alert-success">
+                <i class="fa fa-check-circle"></i> <span th:text="${success}"></span>
+            </div>
+            <div th:if="${warning}" class="alert alert-warning">
+                <i class="fa fa-triangle-exclamation"></i> <span th:text="${warning}"></span>
+            </div>
+
+            <!-- Filtros de búsqueda -->
+            <div class="panel" style="margin-bottom:20px;">
+                <div class="panel-body" style="padding:16px 24px;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+                        <form th:action="@{/coordinacion/estudiantes}" method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                            <div>
+                                <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px; text-transform:uppercase;">Buscar por nombre/apellido</label>
+                                <input type="text" name="q" class="form-control" style="width:220px;"
+                                       placeholder="Ej: García" th:value="${param.q}"/>
+                            </div>
+                            <div>
+                                <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px; text-transform:uppercase;">Programa</label>
+                                <select name="tipo" class="form-control" style="width:180px;">
+                                    <option value="">Todos</option>
+                                    <option value="TECNOLOGIA" th:selected="${param.tipo == 'TECNOLOGIA'}">Tecnología</option>
+                                    <option value="PROFESIONAL" th:selected="${param.tipo == 'PROFESIONAL'}">Profesional</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-search"></i> Buscar
+                            </button>
+                            <a th:href="@{/coordinacion/estudiantes}" class="btn btn-outline">
+                                <i class="fa fa-rotate-left"></i> Limpiar
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de estudiantes -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2><i class="fa fa-table"></i> Listado de Estudiantes
+                        (<span th:text="${#lists.size(estudiantes)}">0</span>)
+                    </h2>
+                </div>
+                <div class="table-wrapper">
+                    <table class="sp-table">
+                        <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Documento</th>
+                            <th>N° Registro</th>
+                            <th>Programa</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th>Resultado</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="est : ${estudiantes}">
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div style="width:36px; height:36px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;"
+                                         th:text="${est.primerNombre.substring(0,1) + est.primerApellido.substring(0,1)}"></div>
+                                    <div>
+                                        <strong th:text="${est.primerNombre + ' ' + est.primerApellido}"></strong><br/>
+                                        <small style="color:var(--text-muted);" th:text="${est.programa}"></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <small style="color:var(--text-muted);" th:text="${est.tipoDocumento}"></small><br/>
+                                <strong th:text="${est.numeroDocumento}"></strong>
+                            </td>
+                            <td style="font-family:monospace; font-size:12px;" th:text="${est.numeroRegistro}"></td>
+                            <td>
+                                <span class="badge-tec" th:if="${est.tipoPrograma.name() == 'TECNOLOGIA'}">Tecnología</span>
+                                <span class="badge-prof" th:if="${est.tipoPrograma.name() == 'PROFESIONAL'}">Profesional</span>
+                            </td>
+                            <td style="font-size:12px;" th:text="${est.correoElectronico}"></td>
+                            <td>
+                                <span class="badge-aprobado" th:if="${est.estado.name() == 'APROBADO'}">Aprobado</span>
+                                <span class="badge-pendiente" th:if="${est.estado.name() == 'PENDIENTE'}">Pendiente</span>
+                                <span class="badge-rechazado" th:if="${est.estado.name() == 'RECHAZADO'}">Rechazado</span>
+                                <span class="badge-rechazado" th:if="${est.estado.name() == 'ANULADO'}">Anulado</span>
+                            </td>
+                            <td>
+                                <span th:if="${est.resultado != null}"
+                                      style="font-weight:800; color:var(--primary);"
+                                      th:text="${est.resultado.puntajeTotal} + ' pts'"></span>
+                                <span th:unless="${est.resultado != null}"
+                                      style="color:var(--text-muted); font-size:12px;">Sin resultado</span>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    <a th:href="@{/coordinacion/estudiantes/{id}(id=${est.id})}"
+                                       class="btn btn-outline btn-sm" title="Ver detalle">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <button onclick="abrirEditar(this)"
+                                            th:data-id="${est.id}"
+                                            th:data-nombre="${est.primerNombre}"
+                                            th:data-apellido="${est.primerApellido}"
+                                            th:data-nombre2="${est.segundoNombre}"
+                                            th:data-apellido2="${est.segundoApellido}"
+                                            th:data-correo="${est.correoElectronico}"
+                                            th:data-tel="${est.numeroTelefonico}"
+                                            th:data-tipo="${est.tipoPrograma}"
+                                            th:data-programa="${est.programa}"
+                                            class="btn btn-primary btn-sm" title="Editar">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                    <a th:if="${est.estado.name() == 'PENDIENTE'}"
+                                       th:href="@{/coordinacion/estudiantes/aprobar/{id}(id=${est.id})}"
+                                       class="btn btn-success btn-sm" title="Aprobar"
+                                       onclick="return confirm('¿Aprobar este estudiante?')">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                    <a th:if="${est.estado.name() == 'PENDIENTE'}"
+                                       th:href="@{/coordinacion/estudiantes/rechazar/{id}(id=${est.id})}"
+                                       class="btn btn-danger btn-sm" title="Rechazar"
+                                       onclick="return confirm('¿Rechazar este estudiante?')">
+                                        <i class="fa fa-xmark"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(estudiantes)}">
+                            <td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">
+                                <i class="fa fa-users" style="font-size:36px; opacity:0.2; display:block; margin-bottom:8px;"></i>
+                                No se encontraron estudiantes con los filtros seleccionados.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ===== Modal Nuevo Estudiante ===== -->
+<div id="modalNuevo" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:999; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:#fff; border-radius:16px; padding:32px; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-md);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h2 style="font-size:17px; color:var(--primary-dark);"><i class="fa fa-user-plus"></i> Registrar Estudiante</h2>
+            <button onclick="document.getElementById('modalNuevo').style.display='none'"
+                    style="border:none; background:none; font-size:20px; cursor:pointer; color:var(--text-muted);">✕</button>
+        </div>
+        <form th:action="@{/coordinacion/estudiantes/guardar}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Primer Nombre *</label>
+                    <input type="text" name="primerNombre" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Segundo Nombre</label>
+                    <input type="text" name="segundoNombre" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label>Primer Apellido *</label>
+                    <input type="text" name="primerApellido" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Segundo Apellido</label>
+                    <input type="text" name="segundoApellido" class="form-control"/>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tipo Documento</label>
+                    <select name="tipoDocumento" class="form-control">
+                        <option value="CC">CC - Cédula de Ciudadanía</option>
+                        <option value="TI">TI - Tarjeta de Identidad</option>
+                        <option value="CE">CE - Cédula Extranjería</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Número Documento *</label>
+                    <input type="text" name="numeroDocumento" class="form-control" required/>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Correo Electrónico *</label>
+                    <input type="email" name="correoElectronico" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" name="numeroTelefonico" class="form-control"/>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tipo Programa *</label>
+                    <select name="tipoPrograma" class="form-control" required>
+                        <option value="TECNOLOGIA">Tecnología</option>
+                        <option value="PROFESIONAL">Profesional</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Programa *</label>
+                    <input type="text" name="programa" class="form-control"
+                           placeholder="Ej: Tecnología en Sistemas" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>N° Registro</label>
+                <input type="text" name="numeroRegistro" class="form-control"
+                       placeholder="Ej: EK20183007722" required/>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+                <button type="button" onclick="document.getElementById('modalNuevo').style.display='none'"
+                        class="btn btn-outline">Cancelar</button>
+                <button type="submit" class="btn btn-accent">
+                    <i class="fa fa-save"></i> Guardar Estudiante
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== Modal Editar Estudiante ===== -->
+<div id="modalEditar" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:999; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:#fff; border-radius:16px; padding:32px; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-md);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h2 style="font-size:17px; color:var(--primary-dark);"><i class="fa fa-pen"></i> Editar Estudiante</h2>
+            <button onclick="document.getElementById('modalEditar').style.display='none'"
+                    style="border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
+        </div>
+        <form id="formEditar" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Primer Nombre</label>
+                    <input type="text" id="edit-nombre" name="primerNombre" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Segundo Nombre</label>
+                    <input type="text" id="edit-nombre2" name="segundoNombre" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label>Primer Apellido</label>
+                    <input type="text" id="edit-apellido" name="primerApellido" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Segundo Apellido</label>
+                    <input type="text" id="edit-apellido2" name="segundoApellido" class="form-control"/>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="edit-correo" name="correoElectronico" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="edit-tel" name="numeroTelefonico" class="form-control"/>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tipo Programa</label>
+                    <select id="edit-tipo" name="tipoPrograma" class="form-control">
+                        <option value="TECNOLOGIA">Tecnología</option>
+                        <option value="PROFESIONAL">Profesional</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Programa</label>
+                    <input type="text" id="edit-programa" name="programa" class="form-control" required/>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button type="button" onclick="document.getElementById('modalEditar').style.display='none'"
+                        class="btn btn-outline">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Actualizar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    const id = btn.dataset.id;
+    document.getElementById('edit-nombre').value = btn.dataset.nombre || '';
+    document.getElementById('edit-apellido').value = btn.dataset.apellido || '';
+    document.getElementById('edit-nombre2').value = btn.dataset.nombre2 || '';
+    document.getElementById('edit-apellido2').value = btn.dataset.apellido2 || '';
+    document.getElementById('edit-correo').value = btn.dataset.correo || '';
+    document.getElementById('edit-tel').value = btn.dataset.tel || '';
+    document.getElementById('edit-tipo').value = btn.dataset.tipo || 'TECNOLOGIA';
+    document.getElementById('edit-programa').value = btn.dataset.programa || '';
+    document.getElementById('formEditar').action = '/coordinacion/estudiantes/editar/' + id;
+    document.getElementById('modalEditar').style.display = 'flex';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Estudiantes · Docente · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-docente}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-users" style="color:var(--accent);"></i> &nbsp;Consulta de Estudiantes</h1>
+                <p>Búsqueda y consulta de resultados individuales</p>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Búsqueda por cédula -->
+            <div class="panel" style="margin-bottom:20px;">
+                <div class="panel-body" style="padding:18px 24px;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+                        <form th:action="@{/docente/estudiantes}" method="get"
+                              style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                            <div>
+                                <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px; text-transform:uppercase;">Buscar por cédula</label>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="text" name="cedula" class="form-control" style="width:200px;"
+                                           placeholder="Número de documento" th:value="${param.cedula}"/>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <form th:action="@{/docente/estudiantes}" method="get"
+                              style="display:flex; gap:10px; align-items:flex-end;">
+                            <div>
+                                <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px; text-transform:uppercase;">Filtrar por programa</label>
+                                <div style="display:flex; gap:8px;">
+                                    <select name="facultad" class="form-control" style="width:180px;">
+                                        <option value="">Todos</option>
+                                        <option value="TECNOLOGIA">Tecnología</option>
+                                        <option value="PROFESIONAL">Profesional</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-outline"><i class="fa fa-filter"></i> Filtrar</button>
+                                </div>
+                            </div>
+                        </form>
+                        <a th:href="@{/docente/estudiantes}" class="btn btn-outline" style="align-self:flex-end;">
+                            <i class="fa fa-rotate-left"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado de búsqueda individual -->
+            <div th:if="${estudiante != null}" class="panel" style="margin-bottom:20px; border:2px solid var(--accent);">
+                <div class="panel-header" style="background:rgba(240,127,43,0.06);">
+                    <h2><i class="fa fa-user-check" style="color:var(--accent);"></i> Resultado de Búsqueda</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="profile-card" style="margin-bottom:0;">
+                        <div class="profile-avatar">🎓</div>
+                        <div class="profile-info">
+                            <h2 th:text="${estudiante.nombreCompleto}"></h2>
+                            <p th:text="${estudiante.programa}"></p>
+                            <div class="profile-meta">
+                                <span th:text="${estudiante.tipoDocumento + ': ' + estudiante.numeroDocumento}"></span>
+                                <span th:text="${estudiante.numeroRegistro}"></span>
+                            </div>
+                        </div>
+                        <div style="margin-left:auto; text-align:right; flex-shrink:0;">
+                            <div th:if="${estudiante.resultado != null}"
+                                 style="font-size:48px; font-weight:900; color:#f07f2b; line-height:1;"
+                                 th:text="${estudiante.resultado.puntajeTotal}"></div>
+                            <div th:if="${estudiante.resultado != null}"
+                                 style="font-size:12px; opacity:0.8;">puntaje global</div>
+                            <div th:unless="${estudiante.resultado != null}"
+                                 style="color:rgba(255,255,255,0.5); font-size:13px;">Sin resultado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla general -->
+            <div class="panel" th:if="${estudiantes != null}">
+                <div class="panel-header">
+                    <h2><i class="fa fa-list"></i> Listado de Estudiantes
+                        (<span th:text="${#lists.size(estudiantes)}">0</span>)
+                    </h2>
+                </div>
+                <div class="table-wrapper">
+                    <table class="sp-table">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Registro</th>
+                            <th>Programa</th>
+                            <th>Estado</th>
+                            <th>Puntaje</th>
+                            <th>Nivel</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="est : ${estudiantes}">
+                            <td>
+                                <strong th:text="${est.primerNombre + ' ' + est.primerApellido}"></strong><br/>
+                                <small style="color:var(--text-muted);" th:text="${est.correoElectronico}"></small>
+                            </td>
+                            <td th:text="${est.tipoDocumento + ' ' + est.numeroDocumento}"></td>
+                            <td style="font-family:monospace; font-size:12px;" th:text="${est.numeroRegistro}"></td>
+                            <td>
+                                <span class="badge-tec" th:if="${est.tipoPrograma.name() == 'TECNOLOGIA'}">TEC</span>
+                                <span class="badge-prof" th:if="${est.tipoPrograma.name() == 'PROFESIONAL'}">PROF</span>
+                            </td>
+                            <td>
+                                <span class="badge-aprobado" th:if="${est.estado.name() == 'APROBADO'}">Aprobado</span>
+                                <span class="badge-pendiente" th:if="${est.estado.name() == 'PENDIENTE'}">Pendiente</span>
+                                <span class="badge-rechazado" th:if="${est.estado.name() == 'RECHAZADO'}">Rechazado</span>
+                            </td>
+                            <td>
+                                <strong th:if="${est.resultado != null}"
+                                        style="color:var(--primary); font-size:15px;"
+                                        th:text="${est.resultado.puntajeTotal}"></strong>
+                                <span th:unless="${est.resultado != null}" style="color:var(--text-muted);">—</span>
+                            </td>
+                            <td>
+                                <span th:if="${est.resultado != null}"
+                                      class="nivel-badge"
+                                      th:classappend="${est.resultado.nivelTotal == 'Nivel 4'} ? 'nivel-4' : (${est.resultado.nivelTotal == 'Nivel 3'} ? 'nivel-3' : (${est.resultado.nivelTotal == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                      th:text="${est.resultado.nivelTotal}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(estudiantes)}">
+                            <td colspan="7" style="text-align:center; padding:32px; color:var(--text-muted);">
+                                No se encontraron estudiantes.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

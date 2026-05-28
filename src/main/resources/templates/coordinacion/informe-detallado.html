@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Informe Detallado · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-coordinacion}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-chart-column" style="color:var(--accent);"></i> &nbsp;Informe Detallado de Resultados</h1>
+                <p>Competencias genéricas y específicas por estudiante</p>
+            </div>
+            <div class="topbar-right">
+                <a th:href="@{/coordinacion/informe/general}" class="btn btn-outline">
+                    <i class="fa fa-arrow-left"></i> Informe General
+                </a>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Promedios -->
+            <div class="stats-grid" style="margin-bottom:24px;">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <h3 th:text="${promedioTec}">0</h3>
+                        <p>Promedio Tecnología</p>
+                    </div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <h3 th:text="${promedioProf}">0</h3>
+                        <p>Promedio Profesional</p>
+                    </div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <h3 th:text="${#lists.size(resultados)}">0</h3>
+                        <p>Total con resultado</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2><i class="fa fa-table-columns"></i> Resultados Detallados — Ordenados por Puntaje</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table class="sp-table">
+                        <thead>
+                        <tr>
+                            <th>Pos.</th>
+                            <th>Estudiante</th>
+                            <th>Prog.</th>
+                            <th style="background:#e8f0fe;">Global</th>
+                            <th style="background:#e8f0fe;">Nivel</th>
+                            <th>Com. Escrita</th>
+                            <th>Raz. Cuant.</th>
+                            <th>Lect. Crít.</th>
+                            <th>Comp. Ciu.</th>
+                            <th>Inglés</th>
+                            <th>Form. Proy.</th>
+                            <th>Pens. Cient.</th>
+                            <th>Diseño Sw.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="r, i : ${resultados}">
+                            <td>
+                                <span th:if="${i.index == 0}" style="font-size:16px;">🥇</span>
+                                <span th:if="${i.index == 1}" style="font-size:16px;">🥈</span>
+                                <span th:if="${i.index == 2}" style="font-size:16px;">🥉</span>
+                                <span th:if="${i.index >= 3}" style="color:var(--text-muted); font-weight:600;" th:text="${i.count}"></span>
+                            </td>
+                            <td>
+                                <strong th:text="${r.estudiante.primerNombre + ' ' + r.estudiante.primerApellido}"></strong><br/>
+                                <small style="color:var(--text-muted); font-family:monospace;" th:text="${r.estudiante.numeroRegistro}"></small>
+                            </td>
+                            <td>
+                                <span class="badge-tec" th:if="${r.estudiante.tipoPrograma.name() == 'TECNOLOGIA'}">TEC</span>
+                                <span class="badge-prof" th:if="${r.estudiante.tipoPrograma.name() == 'PROFESIONAL'}">PROF</span>
+                            </td>
+                            <td style="background:#f0f4ff;">
+                                <strong style="font-size:16px; color:var(--primary-dark);" th:text="${r.puntajeTotal}"></strong>
+                            </td>
+                            <td style="background:#f0f4ff;">
+                                <span class="nivel-badge"
+                                      th:classappend="${r.nivelTotal == 'Nivel 4'} ? 'nivel-4' : (${r.nivelTotal == 'Nivel 3'} ? 'nivel-3' : (${r.nivelTotal == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                      th:text="${r.nivelTotal}"></span>
+                            </td>
+                            <td th:text="${r.comunicacionEscrita}"></td>
+                            <td th:text="${r.razonamientoCuantitativo}"></td>
+                            <td th:text="${r.lecturaCritica}"></td>
+                            <td th:text="${r.competenciasCiudadanas}"></td>
+                            <td>
+                                <span th:text="${r.ingles}"></span>
+                                <small style="color:var(--text-muted);" th:text="'(' + ${r.nivelInglesLetra} + ')'"></small>
+                            </td>
+                            <td th:text="${r.formulacionProyectosIngenieria}"></td>
+                            <td th:text="${r.pensamientoCientificoMatematicas}"></td>
+                            <td th:text="${r.disenoSoftware}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(resultados)}">
+                            <td colspan="13" style="text-align:center; padding:40px; color:var(--text-muted);">
+                                No hay resultados registrados aún.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

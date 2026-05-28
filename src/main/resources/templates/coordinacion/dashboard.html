@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard Coordinación · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-coordinacion}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-gauge-high" style="color:var(--accent);"></i> &nbsp;Dashboard Coordinación</h1>
+                <p>Gestión y seguimiento de estudiantes Saber Pro</p>
+            </div>
+            <div class="topbar-right">
+                <span class="badge-rol">Coordinación</span>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎓</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalTecnologia}">0</h3>
+                        <p>Tecnología</p>
+                    </div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-icon">🏛️</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalProfesional}">0</h3>
+                        <p>Profesional</p>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${aprobados}">0</h3>
+                        <p>Aprobados</p>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <h3 th:text="${pendientes}">0</h3>
+                        <p>Pendientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Promedios -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-chart-pie"></i> Promedios Puntaje Global</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display:flex; gap:16px; margin-bottom:24px;">
+                            <div style="flex:1; background:linear-gradient(135deg,#1a3a5c,#234f7d); border-radius:12px; padding:20px; text-align:center; color:#fff;">
+                                <div style="font-size:11px; opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Tecnología</div>
+                                <div style="font-size:40px; font-weight:900; color:#f07f2b;" th:text="${promedioTec}">0</div>
+                                <div style="font-size:11px; opacity:0.5; margin-top:4px;">puntos promedio</div>
+                            </div>
+                            <div style="flex:1; background:linear-gradient(135deg,#4a1a5c,#7d2366); border-radius:12px; padding:20px; text-align:center; color:#fff;">
+                                <div style="font-size:11px; opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Profesional</div>
+                                <div style="font-size:40px; font-weight:900; color:#f5d05c;" th:text="${promedioProf}">0</div>
+                                <div style="font-size:11px; opacity:0.5; margin-top:4px;">puntos promedio</div>
+                            </div>
+                        </div>
+
+                        <div style="background:var(--bg); border-radius:10px; padding:16px;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:12px;">DISTRIBUCIÓN 70/30</div>
+                            <div style="height:20px; border-radius:10px; overflow:hidden; display:flex;">
+                                <div style="background:var(--primary); width:70%; display:flex; align-items:center; justify-content:center;">
+                                    <span style="color:#fff; font-size:11px; font-weight:700;">70% TEC</span>
+                                </div>
+                                <div style="background:var(--accent); width:30%; display:flex; align-items:center; justify-content:center;">
+                                    <span style="color:#fff; font-size:11px; font-weight:700;">30% PROF</span>
+                                </div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--text-muted);">
+                                <span th:text="${totalTecnologia} + ' estudiantes'"></span>
+                                <span th:text="${totalProfesional} + ' estudiantes'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones rápidas -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-bolt"></i> Acciones Rápidas</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <a th:href="@{/coordinacion/estudiantes}" class="btn btn-primary" style="justify-content:flex-start;">
+                                <i class="fa fa-users"></i> Gestionar Estudiantes
+                            </a>
+                            <a th:href="@{/coordinacion/estudiantes?tipo=TECNOLOGIA}" class="btn btn-outline" style="justify-content:flex-start;">
+                                <i class="fa fa-microchip"></i> Ver Estudiantes Tecnología
+                            </a>
+                            <a th:href="@{/coordinacion/estudiantes?tipo=PROFESIONAL}" class="btn btn-outline" style="justify-content:flex-start;">
+                                <i class="fa fa-graduation-cap"></i> Ver Estudiantes Profesional
+                            </a>
+                            <a th:href="@{/coordinacion/informe/general}" class="btn btn-accent" style="justify-content:flex-start;">
+                                <i class="fa fa-file-lines"></i> Generar Informe General
+                            </a>
+                            <a th:href="@{/coordinacion/informe/detallado}" class="btn btn-outline" style="justify-content:flex-start;">
+                                <i class="fa fa-chart-column"></i> Informe Detallado de Resultados
+                            </a>
+                            <a th:href="@{/coordinacion/beneficios}" class="btn btn-outline" style="justify-content:flex-start;">
+                                <i class="fa fa-award"></i> Resolución de Beneficios
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

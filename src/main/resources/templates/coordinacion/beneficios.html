@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Beneficios · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-coordinacion}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-award" style="color:var(--accent);"></i> &nbsp;Beneficios Académicos</h1>
+                <p>Beneficios disponibles según nivel y programa</p>
+            </div>
+        </header>
+
+        <div class="page-body">
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap:18px;">
+                <div th:each="b : ${beneficios}" class="beneficio-card">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div style="font-size:12px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;"
+                                 th:text="${b.tipo}"></div>
+                            <h3 th:text="${b.nombre}"></h3>
+                        </div>
+                        <span class="nivel-badge nivel-3" style="flex-shrink:0; margin-left:10px;" th:text="${b.nivelRequerido}"></span>
+                    </div>
+                    <p style="margin-top:8px;" th:text="${b.descripcion}"></p>
+                    <div class="meta">
+                        <span class="badge-tec" th:if="${b.programaAplicable.name() == 'TECNOLOGIA'}">
+                            <i class="fa fa-microchip"></i> Tecnología
+                        </span>
+                        <span class="badge-prof" th:if="${b.programaAplicable.name() == 'PROFESIONAL'}">
+                            <i class="fa fa-graduation-cap"></i> Profesional
+                        </span>
+                        <span class="badge-aprobado" th:if="${b.programaAplicable.name() == 'AMBOS'}">
+                            <i class="fa fa-users"></i> Todos los programas
+                        </span>
+                        <span style="font-size:11px; color:var(--text-muted); background:var(--bg); padding:3px 9px; border-radius:20px;"
+                              th:text="${b.resolucion}"></span>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(beneficios)}"
+                     style="grid-column:1/-1; text-align:center; padding:60px; color:var(--text-muted);">
+                    <i class="fa fa-award" style="font-size:48px; opacity:0.2; display:block; margin-bottom:10px;"></i>
+                    No hay beneficios configurados en el sistema.
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

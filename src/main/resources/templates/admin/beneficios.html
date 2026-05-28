@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Beneficios · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-admin}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-award" style="color:var(--accent);"></i> &nbsp;Beneficios</h1>
+                <p>Resoluciones y beneficios por programa</p>
+            </div>
+        </header>
+
+        <div class="page-body">
+            <div th:each="b : ${beneficios}" class="beneficio-card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h3 th:text="${b.nombre}"></h3>
+                        <p th:text="${b.descripcion}"></p>
+                    </div>
+                    <div style="text-align:right; flex-shrink:0;">
+                        <span class="nivel-badge nivel-3" th:text="${b.nivelRequerido}"></span>
+                    </div>
+                </div>
+                <div class="meta">
+                    <span class="badge-tec" th:if="${b.programaAplicable.name() == 'TECNOLOGIA'}">Tecnología</span>
+                    <span class="badge-prof" th:if="${b.programaAplicable.name() == 'PROFESIONAL'}">Profesional</span>
+                    <span class="badge-aprobado" th:if="${b.programaAplicable.name() == 'AMBOS'}">Todos los programas</span>
+                    <span style="background:#f3e5f5; color:#6a1b9a; font-size:11px; padding:3px 9px; border-radius:20px; font-weight:600;"
+                          th:text="${b.tipo}"></span>
+                    <span style="font-size:12px; color:var(--text-muted);" th:text="'Resolución: ' + ${b.resolucion}"></span>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(beneficios)}"
+                 style="text-align:center; padding:60px; color:var(--text-muted);">
+                <i class="fa fa-award" style="font-size:48px; opacity:0.2;"></i>
+                <p style="margin-top:10px;">No hay beneficios configurados</p>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Detalle Estudiante · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-coordinacion}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-id-badge" style="color:var(--accent);"></i> &nbsp;Detalle del Estudiante</h1>
+                <p th:text="${estudiante.nombreCompleto}"></p>
+            </div>
+            <div class="topbar-right">
+                <a th:href="@{/coordinacion/estudiantes}" class="btn btn-outline">
+                    <i class="fa fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Ficha del estudiante -->
+            <div class="profile-card">
+                <div class="profile-avatar">🎓</div>
+                <div class="profile-info">
+                    <h2 th:text="${estudiante.nombreCompleto}"></h2>
+                    <p th:text="${estudiante.programa}"></p>
+                    <div class="profile-meta">
+                        <span th:text="'📋 ' + ${estudiante.tipoDocumento} + ': ' + ${estudiante.numeroDocumento}"></span>
+                        <span th:text="'🔖 ' + ${estudiante.numeroRegistro}"></span>
+                        <span th:text="'📧 ' + ${estudiante.correoElectronico}"></span>
+                        <span th:if="${estudiante.numeroTelefonico}" th:text="'📱 ' + ${estudiante.numeroTelefonico}"></span>
+                    </div>
+                </div>
+                <div style="margin-left:auto; text-align:right; flex-shrink:0;">
+                    <span class="badge-tec" th:if="${estudiante.tipoPrograma.name() == 'TECNOLOGIA'}"
+                          style="font-size:13px; padding:6px 14px;">TECNOLOGÍA</span>
+                    <span class="badge-prof" th:if="${estudiante.tipoPrograma.name() == 'PROFESIONAL'}"
+                          style="font-size:13px; padding:6px 14px;">PROFESIONAL</span>
+                    <br/><br/>
+                    <span class="badge-aprobado" th:if="${estudiante.estado.name() == 'APROBADO'}"
+                          style="font-size:13px; padding:6px 14px;">✅ Aprobado</span>
+                    <span class="badge-pendiente" th:if="${estudiante.estado.name() == 'PENDIENTE'}"
+                          style="font-size:13px; padding:6px 14px;">⏳ Pendiente</span>
+                    <span class="badge-rechazado" th:if="${estudiante.estado.name() == 'RECHAZADO'}"
+                          style="font-size:13px; padding:6px 14px;">❌ Rechazado</span>
+                </div>
+            </div>
+
+            <!-- Resultado Saber Pro -->
+            <div th:if="${resultado != null}">
+                <!-- Puntaje hero -->
+                <div class="score-hero" style="margin-bottom:24px;">
+                    <div style="font-size:12px; opacity:0.6; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">Puntaje Global Saber Pro</div>
+                    <div class="score-number" th:text="${resultado.puntajeTotal}">0</div>
+                    <div class="score-label">Puntos sobre 300</div>
+                    <div class="nivel-label" th:text="${resultado.nivelTotal}">Nivel N</div>
+                    <div style="margin-top:8px; font-size:12px; opacity:0.5;"
+                         th:text="'Inglés: ' + ${resultado.nivelInglesLetra}"></div>
+                </div>
+
+                <!-- Competencias genéricas -->
+                <div class="panel" style="margin-bottom:24px;">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-star"></i> Competencias Genéricas</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="comp-grid">
+                            <div class="comp-card">
+                                <h4>Comunicación Escrita</h4>
+                                <div class="comp-puntaje" th:text="${resultado.comunicacionEscrita}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelComunicacionEscrita == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelComunicacionEscrita == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelComunicacionEscrita == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelComunicacionEscrita}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.comunicacionEscrita} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <div class="comp-card">
+                                <h4>Razonamiento Cuantitativo</h4>
+                                <div class="comp-puntaje" th:text="${resultado.razonamientoCuantitativo}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelRazonamientoCuantitativo == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelRazonamientoCuantitativo == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelRazonamientoCuantitativo == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelRazonamientoCuantitativo}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.razonamientoCuantitativo} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <div class="comp-card">
+                                <h4>Lectura Crítica</h4>
+                                <div class="comp-puntaje" th:text="${resultado.lecturaCritica}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelLecturaCritica == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelLecturaCritica == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelLecturaCritica == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelLecturaCritica}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.lecturaCritica} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <div class="comp-card">
+                                <h4>Competencias Ciudadanas</h4>
+                                <div class="comp-puntaje" th:text="${resultado.competenciasCiudadanas}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelCompetenciasCiudadanas == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelCompetenciasCiudadanas == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelCompetenciasCiudadanas == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelCompetenciasCiudadanas}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.competenciasCiudadanas} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <div class="comp-card">
+                                <h4>Inglés</h4>
+                                <div class="comp-puntaje" th:text="${resultado.ingles}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge nivel-3" th:text="${resultado.nivelInglesLetra}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.ingles} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Competencias específicas -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-microchip"></i> Competencias Específicas</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="comp-grid">
+                            <div class="comp-card">
+                                <h4>Formulación de Proyectos de Ingeniería</h4>
+                                <div class="comp-puntaje" th:text="${resultado.formulacionProyectosIngenieria}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelFormulacionProyectos == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelFormulacionProyectos == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelFormulacionProyectos == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelFormulacionProyectos}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.formulacionProyectosIngenieria} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <div class="comp-card">
+                                <h4>Pensamiento Científico - Matemáticas y Estadística</h4>
+                                <div class="comp-puntaje" th:text="${resultado.pensamientoCientificoMatematicas}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelPensamientoCientifico == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelPensamientoCientifico == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelPensamientoCientifico == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelPensamientoCientifico}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.pensamientoCientificoMatematicas} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <div class="comp-card">
+                                <h4>Diseño de Software</h4>
+                                <div class="comp-puntaje" th:text="${resultado.disenoSoftware}">0</div>
+                                <div class="comp-nivel">
+                                    <span class="nivel-badge"
+                                          th:classappend="${resultado.nivelDisenoSoftware == 'Nivel 4'} ? 'nivel-4' : (${resultado.nivelDisenoSoftware == 'Nivel 3'} ? 'nivel-3' : (${resultado.nivelDisenoSoftware == 'Nivel 2'} ? 'nivel-2' : 'nivel-1'))"
+                                          th:text="${resultado.nivelDisenoSoftware}"></span>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" th:style="'width:' + (${resultado.disenoSoftware} / 3.0) + '%'"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sin resultado -->
+            <div th:unless="${resultado != null}" class="panel">
+                <div class="panel-body" style="text-align:center; padding:50px; color:var(--text-muted);">
+                    <i class="fa fa-file-circle-question" style="font-size:48px; opacity:0.25; display:block; margin-bottom:12px;"></i>
+                    Este estudiante aún no tiene resultados Saber Pro registrados.
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

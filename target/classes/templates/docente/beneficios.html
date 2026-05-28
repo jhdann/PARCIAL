@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Beneficios · Docente · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-docente}"></div>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-award" style="color:var(--accent);"></i> &nbsp;Beneficios Académicos</h1>
+                <p>Beneficios vigentes para el periodo 2026-I</p>
+            </div>
+        </header>
+        <div class="page-body">
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:16px;">
+                <div th:each="b : ${beneficios}" class="beneficio-card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:4px;" th:text="${b.tipo}"></div>
+                        <span class="nivel-badge nivel-3" th:text="${b.nivelRequerido}"></span>
+                    </div>
+                    <h3 th:text="${b.nombre}" style="margin-bottom:6px;"></h3>
+                    <p th:text="${b.descripcion}"></p>
+                    <div class="meta">
+                        <span class="badge-tec" th:if="${b.programaAplicable.name() == 'TECNOLOGIA'}">Tecnología</span>
+                        <span class="badge-prof" th:if="${b.programaAplicable.name() == 'PROFESIONAL'}">Profesional</span>
+                        <span class="badge-aprobado" th:if="${b.programaAplicable.name() == 'AMBOS'}">Ambos programas</span>
+                        <span style="font-size:11px; color:var(--text-muted);" th:text="${b.resolucion}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

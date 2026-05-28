@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard Administrador · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-admin}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-gauge-high" style="color:var(--accent);"></i> &nbsp;Dashboard</h1>
+                <p>Resumen general del sistema Saber Pro</p>
+            </div>
+            <div class="topbar-right">
+                <span class="badge-rol">Administrador</span>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Estadísticas principales -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎓</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalTecnologia}">0</h3>
+                        <p>Tecnología (70%)</p>
+                    </div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-icon">🏛️</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalProfesional}">0</h3>
+                        <p>Profesional (30%)</p>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalAprobados}">0</h3>
+                        <p>Aprobados Saber Pro</p>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalPendientes}">0</h3>
+                        <p>Pendientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Promedios por programa -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-chart-bar"></i> Promedios por Programa</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div style="margin-bottom:20px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                <span style="font-weight:600; font-size:13px;">Tecnología</span>
+                                <span style="font-weight:800; color:var(--primary);" th:text="${promedioTec}">0</span>
+                            </div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill"
+                                     th:style="'width:' + (${promedioTec} / 3.0) + '%'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                <span style="font-weight:600; font-size:13px;">Profesional</span>
+                                <span style="font-weight:800; color:var(--accent);" th:text="${promedioProf}">0</span>
+                            </div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill"
+                                     style="background: linear-gradient(90deg, #f07f2b, #f5a05c);"
+                                     th:style="'background: linear-gradient(90deg, #f07f2b, #f5a05c); width:' + (${promedioProf} / 3.0) + '%'"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:24px; background:var(--bg); border-radius:10px; padding:16px;">
+                            <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Distribución Estudiantes</div>
+                            <div style="display:flex; gap:12px; margin-top:8px;">
+                                <div style="flex:1; text-align:center; background:#e3f2fd; border-radius:8px; padding:12px;">
+                                    <div style="font-size:22px; font-weight:800; color:#1565c0;" th:text="${totalTecnologia}">0</div>
+                                    <div style="font-size:11px; color:#1565c0; font-weight:600;">TECNOLOGÍA</div>
+                                    <div style="font-size:11px; color:#666; margin-top:2px;">70%</div>
+                                </div>
+                                <div style="flex:1; text-align:center; background:#fce4ec; border-radius:8px; padding:12px;">
+                                    <div style="font-size:22px; font-weight:800; color:#880e4f;" th:text="${totalProfesional}">0</div>
+                                    <div style="font-size:11px; color:#880e4f; font-weight:600;">PROFESIONAL</div>
+                                    <div style="font-size:11px; color:#666; margin-top:2px;">30%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top 5 estudiantes -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fa fa-trophy"></i> Top 5 Estudiantes</h2>
+                        <a th:href="@{/admin/informe}" class="btn btn-outline btn-sm">Ver todos</a>
+                    </div>
+                    <div class="panel-body" style="padding:0;">
+                        <div class="table-wrapper">
+                            <table class="sp-table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Estudiante</th>
+                                    <th>Programa</th>
+                                    <th>Puntaje</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="est, iter : ${topEstudiantes}">
+                                    <td>
+                                        <span th:if="${iter.index == 0}" style="font-size:18px;">🥇</span>
+                                        <span th:if="${iter.index == 1}" style="font-size:18px;">🥈</span>
+                                        <span th:if="${iter.index == 2}" style="font-size:18px;">🥉</span>
+                                        <span th:if="${iter.index >= 3}" style="font-weight:700; color:var(--text-muted);" th:text="${iter.index + 1}"></span>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${est.primerNombre + ' ' + est.primerApellido}"></strong><br/>
+                                        <small style="color:var(--text-muted);" th:text="${est.numeroRegistro}"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge-tec" th:if="${est.tipoPrograma.name() == 'TECNOLOGIA'}">TEC</span>
+                                        <span class="badge-prof" th:if="${est.tipoPrograma.name() == 'PROFESIONAL'}">PROF</span>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight:800; color:var(--primary);"
+                                              th:text="${est.resultado != null ? est.resultado.puntajeTotal : 'N/A'}"></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accesos rápidos -->
+            <div class="panel">
+                <div class="panel-header"><h2><i class="fa fa-bolt"></i> Accesos Rápidos</h2></div>
+                <div class="panel-body">
+                    <div style="display:flex; gap:14px; flex-wrap:wrap;">
+                        <a th:href="@{/admin/docentes}" class="btn btn-primary">
+                            <i class="fa fa-chalkboard-teacher"></i> Gestionar Docentes
+                        </a>
+                        <a th:href="@{/admin/beneficios}" class="btn btn-accent">
+                            <i class="fa fa-award"></i> Ver Beneficios
+                        </a>
+                        <a th:href="@{/admin/informe}" class="btn btn-outline">
+                            <i class="fa fa-chart-bar"></i> Informe Completo
+                        </a>
+                        <a th:href="@{/coordinacion/estudiantes}" class="btn btn-outline">
+                            <i class="fa fa-users"></i> Ver Estudiantes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Informe General · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar-coordinacion}"></div>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1><i class="fa fa-file-lines" style="color:var(--accent);"></i> &nbsp;Informe General</h1>
+                <p>Listado completo de estudiantes por programa</p>
+            </div>
+            <div class="topbar-right">
+                <a th:href="@{/coordinacion/informe/detallado}" class="btn btn-primary">
+                    <i class="fa fa-chart-column"></i> Ver Informe Detallado
+                </a>
+            </div>
+        </header>
+
+        <div class="page-body">
+
+            <!-- Tecnología -->
+            <div class="panel" style="margin-bottom:24px;">
+                <div class="panel-header" style="background:linear-gradient(90deg,rgba(26,58,92,0.05),transparent);">
+                    <h2>
+                        <span style="background:#1a3a5c; color:#fff; padding:3px 12px; border-radius:20px; font-size:12px; margin-right:8px;">70%</span>
+                        <i class="fa fa-microchip"></i> Estudiantes de Tecnología
+                        (<span th:text="${#lists.size(tecnologia)}">0</span>)
+                    </h2>
+                </div>
+                <div class="table-wrapper">
+                    <table class="sp-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre Completo</th>
+                            <th>Documento</th>
+                            <th>N° Registro</th>
+                            <th>Programa</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th>Puntaje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="est, i : ${tecnologia}">
+                            <td style="color:var(--text-muted); font-weight:600;" th:text="${i.count}"></td>
+                            <td>
+                                <strong th:text="${est.primerNombre + ' '
+                                    + (est.segundoNombre != null ? est.segundoNombre + ' ' : '')
+                                    + est.primerApellido
+                                    + (est.segundoApellido != null ? ' ' + est.segundoApellido : '')}"></strong>
+                            </td>
+                            <td th:text="${est.tipoDocumento + ' ' + est.numeroDocumento}"></td>
+                            <td style="font-family:monospace; font-size:12px;" th:text="${est.numeroRegistro}"></td>
+                            <td th:text="${est.programa}"></td>
+                            <td style="font-size:12px;" th:text="${est.correoElectronico}"></td>
+                            <td>
+                                <span class="badge-aprobado" th:if="${est.estado.name() == 'APROBADO'}">Aprobado</span>
+                                <span class="badge-pendiente" th:if="${est.estado.name() == 'PENDIENTE'}">Pendiente</span>
+                                <span class="badge-rechazado" th:if="${est.estado.name() == 'RECHAZADO'}">Rechazado</span>
+                            </td>
+                            <td>
+                                <strong th:if="${est.resultado != null}"
+                                        style="color:var(--primary);"
+                                        th:text="${est.resultado.puntajeTotal}"></strong>
+                                <span th:unless="${est.resultado != null}"
+                                      style="color:var(--text-muted); font-size:12px;">—</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(tecnologia)}">
+                            <td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">Sin estudiantes de tecnología registrados.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Profesional -->
+            <div class="panel">
+                <div class="panel-header" style="background:linear-gradient(90deg,rgba(240,127,43,0.05),transparent);">
+                    <h2>
+                        <span style="background:var(--accent); color:#fff; padding:3px 12px; border-radius:20px; font-size:12px; margin-right:8px;">30%</span>
+                        <i class="fa fa-graduation-cap"></i> Estudiantes de Profesional
+                        (<span th:text="${#lists.size(profesional)}">0</span>)
+                    </h2>
+                </div>
+                <div class="table-wrapper">
+                    <table class="sp-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre Completo</th>
+                            <th>Documento</th>
+                            <th>N° Registro</th>
+                            <th>Programa</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th>Puntaje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="est, i : ${profesional}">
+                            <td style="color:var(--text-muted); font-weight:600;" th:text="${i.count}"></td>
+                            <td>
+                                <strong th:text="${est.primerNombre + ' '
+                                    + (est.segundoNombre != null ? est.segundoNombre + ' ' : '')
+                                    + est.primerApellido
+                                    + (est.segundoApellido != null ? ' ' + est.segundoApellido : '')}"></strong>
+                            </td>
+                            <td th:text="${est.tipoDocumento + ' ' + est.numeroDocumento}"></td>
+                            <td style="font-family:monospace; font-size:12px;" th:text="${est.numeroRegistro}"></td>
+                            <td th:text="${est.programa}"></td>
+                            <td style="font-size:12px;" th:text="${est.correoElectronico}"></td>
+                            <td>
+                                <span class="badge-aprobado" th:if="${est.estado.name() == 'APROBADO'}">Aprobado</span>
+                                <span class="badge-pendiente" th:if="${est.estado.name() == 'PENDIENTE'}">Pendiente</span>
+                                <span class="badge-rechazado" th:if="${est.estado.name() == 'RECHAZADO'}">Rechazado</span>
+                            </td>
+                            <td>
+                                <strong th:if="${est.resultado != null}"
+                                        style="color:var(--accent);"
+                                        th:text="${est.resultado.puntajeTotal}"></strong>
+                                <span th:unless="${est.resultado != null}"
+                                      style="color:var(--text-muted); font-size:12px;">—</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(profesional)}">
+                            <td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">Sin estudiantes de profesional registrados.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Error · Saber Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg);">
+    <div style="text-align:center; padding:40px; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow-md); max-width:420px;">
+        <div style="font-size:64px; margin-bottom:12px;">⚠️</div>
+        <h1 style="font-size:20px; color:var(--primary-dark); margin-bottom:8px;">Algo salió mal</h1>
+        <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;"
+           th:text="${message != null ? message : 'Ha ocurrido un error inesperado en el sistema.'}"></p>
+        <a th:href="@{/}" class="btn btn-primary"><i class="fa fa-house"></i> Ir al inicio</a>
+    </div>
+</div>
+</body>
+</html>
